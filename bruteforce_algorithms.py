@@ -34,6 +34,8 @@ class PasswordBreaker:
                     running = False
             else:
                 for guess in itertools.product(characters, repeat=lengths_list):
+                    if self.stop_threads:
+                        break
                     self.attempts += 1
                     guess = "".join(guess)
                     if guess == password:
@@ -70,6 +72,6 @@ class PasswordBreaker:
 
 
 password = input(": ")
-guess = PasswordBreaker().start_threads(password, [1, 2, 3, 4, 5], 2)
+guess = PasswordBreaker().start_threads(password, [3, 4, 5], 5)
 
 print(f"Password was {guess[0]}, {guess[1]} attempts took {guess[2]} seconds")
