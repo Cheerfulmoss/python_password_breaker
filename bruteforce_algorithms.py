@@ -9,28 +9,38 @@ class PasswordBreaker:
     def __init__(self):
         self.guessed_password = ""
         self.attempts = 0
+        self.stop_threads = False
 
     def guess_password(self, password, lengths_list):
         characters = string.printable
-        if type(lengths_list) == list:
-            running = True
-            while running:
-                for length in lengths_list:
-                    for guess in itertools.product(characters, repeat=length):
-                        self.attempts += 1
-                        guess = "".join(guess)
-                        if guess == password:
-                            self.guessed_password = guess
-                            running = False
+        while self.stop_threads is False:
+            if type(lengths_list) == list:
+                running = True
+                while running:
+                    for length in lengths_list:
+                        for guess in itertools.product(characters, repeat=length):
+                            if self.stop_threads:
+                                break
+                            self.attempts += 1
+                            guess = "".join(guess)
+                            if guess == password:
+                                self.guessed_password = guess
+                                self.stop_threads = True
+                                print(f"Thread finished successfully, {length}")
+                                running = False
+                                break
+                        if self.stop_threads:
                             break
-                running = False
-        else:
-            for guess in itertools.product(characters, repeat=lengths_list):
-                self.attempts += 1
-                guess = "".join(guess)
-                if guess == password:
-                    self.guessed_password = guess
-                    break
+                    running = False
+            else:
+                for guess in itertools.product(characters, repeat=lengths_list):
+                    self.attempts += 1
+                    guess = "".join(guess)
+                    if guess == password:
+                        self.guessed_password = guess
+                        self.stop_threads = True
+                        print(f"Thread finished successfully, {lengths_list}")
+                        break
 
     def start_threads(self, password, lengths_list, max_threads):
         for letter in password:
@@ -57,3 +67,9 @@ class PasswordBreaker:
             finished_thread.join()
         total_time = time.time() - start_time
         return self.guessed_password, self.attempts, total_time
+
+
+password = input(": ")
+guess = PasswordBreaker().start_threads(password, [1, 2, 3, 4, 5], 2)
+
+print(f"Password was {guess[0]}, {guess[1]} attempts took {guess[2]} seconds")
