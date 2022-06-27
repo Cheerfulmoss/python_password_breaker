@@ -19,11 +19,11 @@ class PasswordBreaker:
                 while running:
                     for length in lengths_list:
                         for guess in product(self.characters, repeat=length):
+                            guess = "".join(guess)
                             if self.stop_threads:
                                 print(f"Thread {lengths_list} stopped\n")
                                 break
                             self.attempts += 1
-                            guess = "".join(guess)
                             if guess == password:
                                 self.guessed_password = guess
                                 self.stop_threads = True
@@ -38,11 +38,11 @@ class PasswordBreaker:
                     running = False
             else:
                 for guess in product(self.characters, repeat=lengths_list):
+                    guess = "".join(guess)
                     if self.stop_threads:
                         print(f"Thread {lengths_list} stopped\n")
                         break
                     self.attempts += 1
-                    guess = "".join(guess)
                     if guess == password:
                         self.guessed_password = guess
                         self.stop_threads = True
