@@ -20,21 +20,26 @@ class PasswordBreaker:
                     for length in lengths_list:
                         for guess in product(self.characters, repeat=length):
                             if self.stop_threads:
+                                print(f"Thread {lengths_list} stopped\n")
                                 break
                             self.attempts += 1
                             guess = "".join(guess)
                             if guess == password:
                                 self.guessed_password = guess
                                 self.stop_threads = True
-                                print(f"Thread finished successfully, {length}")
+                                print(f"Thread {lengths_list} finished successfully, length {length}\n")
                                 running = False
                                 break
                         if self.stop_threads:
                             break
+                    if self.stop_threads:
+                        break
+                    print(f"Thread {lengths_list} run out of combinations\n")
                     running = False
             else:
                 for guess in product(self.characters, repeat=lengths_list):
                     if self.stop_threads:
+                        print(f"Thread {lengths_list} stopped\n")
                         break
                     self.attempts += 1
                     guess = "".join(guess)
@@ -42,8 +47,11 @@ class PasswordBreaker:
                         self.guessed_password = guess
                         self.stop_threads = True
                         running = False
-                        print(f"Thread finished successfully, {lengths_list}")
+                        print(f"Thread {lengths_list} finished successfully\n")
                         break
+                if self.stop_threads:
+                    break
+                print(f"Thread {lengths_list} run out of combinations\n")
                 running = False
 
     def start_threads(self, password, lengths_list, max_threads):
@@ -71,4 +79,3 @@ class PasswordBreaker:
             finished_thread.join()
         total_time = time() - start_time
         return self.guessed_password, self.attempts, total_time
-    
